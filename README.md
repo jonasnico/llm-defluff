@@ -67,7 +67,7 @@ Create a streaming defluffer. Returns an object with:
 
 - **`push(chunk)`** — Feed a chunk. Returns content to emit, or `null` if still buffering.
 - **`flush()`** — Call when the stream ends. Returns any remaining buffered content.
-- **`getState()`** — Current state: `"buffering"` | `"stripping"` | `"flushing"` | `"passthrough"`
+- **`getState()`** — Current state: `"buffering"` | `"stripping"` | `"passthrough"`
 
 | Option | Type | Default | Description |
 |---|---|---|---|
@@ -77,7 +77,7 @@ Create a streaming defluffer. Returns an object with:
 
 Instead of maintaining a denylist of phrases, `llm-defluff` uses weighted heuristic scoring:
 
-**Opener signals:** affirmation words, meta-commentary ("here's what", "let me"), short length, no factual content (numbers, named entities), pivot markers (!, —)
+**Opener signals:** affirmation words, meta-commentary ("here's what", "let me"), short length, no factual content (numbers, named entities), pivot markers (`!`, `—`, `–`, `-`, `:`)
 
 **Closer signals:** offer patterns ("let me know", "feel free"), second-person pronouns, no factual content, question marks
 
@@ -87,9 +87,9 @@ The streaming state machine:
 
 ```
 BUFFERING → STRIPPING → PASSTHROUGH
-                ↓
-            FLUSHING (not filler → emit buffer)
 ```
+
+`push()` holds chunks in `BUFFERING` until a complete sentence arrives, then evaluates in `STRIPPING`. Once the opener is resolved (stripped or kept), the state moves to `PASSTHROUGH` and all further chunks flow through directly. `flush()` forces resolution when the stream ends early.
 
 Latency hit is only at the start (1–2 sentences). After that, zero overhead.
 
