@@ -55,8 +55,8 @@
     "node": ">=20"
   },
   "devDependencies": {
-    "tsdown": "^0.21.7",
-    "typescript": "^6.0.2",
+    "tsdown": "^0.21.9",
+    "typescript": "^6.0.3",
     "vitest": "^4.1.4"
   }
 }
